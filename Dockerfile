@@ -38,7 +38,7 @@ ADD files/resolv.conf /etc/resolv.conf
 RUN apt-get update
 
 # Install a few packages to get started, but leave package installation up to salt in general
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils vim bind9-host wget iputils-ping software-properties-common
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils vim bind9-host curl iputils-ping software-properties-common
 
 RUN mkdir -p /etc/salt/minion.d && \
     chmod -R 755 /etc/salt
@@ -48,6 +48,7 @@ ADD files/10-minion-overrides.conf /etc/salt/minion.d/
 # No agetty
 RUN rm -f /etc/init/tty*
 RUN rm -f /etc/systemd/system/getty.target.wants/*
+RUN rm -f /sbin/agetty
 
 # Update the .bashrc so once attached, the salt-minion will start if it is not the case.
 ADD files/bashrc_update.sh /root/
@@ -59,7 +60,7 @@ RUN /root/bashrc_update.sh && rm -f /root/bashrc_update.sh
 # docker build does not support --privileged.  salt-minion does successfully install,
 # so this error may be safely ignored.  An || /bin/true is specified to have a zero return code
 RUN apt-get install wget -y && \
-    wget -O install_salt.sh https://bootstrap.saltstack.com && \
+    curl -L https://bootstrap.saltstack.com -o install_salt.sh && \
     sh install_salt.sh -X -P git v$SALT_VERSION || \
     /bin/true
 
