@@ -153,6 +153,15 @@ versions of Ubuntu and salt, and possibly even different distros?**
     When creating a container, make sure the cwd is the top-level directory of this git
     repository, or specify the full path to salt and pillar directories when adding volume arguments.
 
+Known Issues
+------------
+
++ Starting docker instances on a Linux desktop may occasionally switch the tty, which
+  is typically resolved with alt-F[89].
+
++ Developing salt states related to userland packages and files generally works very well, but some
+  non-userland-related states such as certain systcl tunables may not work in a docker environment.
+
 License
 -------
 
